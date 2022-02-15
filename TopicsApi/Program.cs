@@ -1,3 +1,6 @@
+using AutoMapper;
+using TopicsApi.AutomapperProfiles;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -7,7 +10,26 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddCors(config =>
+{
+    config.AddDefaultPolicy(pol =>
+    {
+        pol.AllowAnyOrigin();
+        pol.AllowAnyMethod();
+        pol.AllowAnyHeader();
+    });
+});
+
 builder.Services.AddTransient<ILookupOnCallDevelopers, FakeDeveloperLookup>();
+
+var mapperConfig = new MapperConfiguration(opts =>
+ {
+     opts.AddProfile<TopicsProfile>();
+ });
+
+builder.Services.AddSingleton<MapperConfiguration>(mapperConfig);
+var mapper =mapperConfig.CreateMapper();
+builder.Services.AddSingleton<IMapper>(mapper);
 
 builder.Services.AddScoped<IProvideTopicsData, EfSqlTopicsData>();
 // The TopicsDataContext is set up as a Scoped service.  You can inject it into your controllers, services and stuff.
@@ -18,6 +40,8 @@ builder.Services.AddDbContext<TopicsDataContext>(options =>
 
 // Building the actual application
 var app = builder.Build();
+
+app.UseCors();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
