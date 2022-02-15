@@ -1,10 +1,18 @@
 ﻿namespace TopicsApi.Controllers;
 
-public class StatusController:ControllerBase
+public class StatusController : ControllerBase
 {
-    [HttpGet("status/oncalldeveloper")]
-    public ActionResult GetOnCallDeveloper()
+    private readonly ILookupOnCallDevelopers _onCallDeveloperLookup;
+
+    public StatusController(ILookupOnCallDevelopers onCallDeveloperLookup)
     {
-        return Ok();
+        _onCallDeveloperLookup = onCallDeveloperLookup;
+    }
+
+    [HttpGet("status/on-call-developer")]
+    public async Task<ActionResult<GetCurrentDeveloperModel>> GetOnCallDeveloperAsync()
+    {
+        GetCurrentDeveloperModel response = await _onCallDeveloperLookup.GetCurrentOnCallDevloperAsync();
+        return Ok(response);
     }
 }
