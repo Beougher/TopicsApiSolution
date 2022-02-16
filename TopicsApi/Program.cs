@@ -21,6 +21,12 @@ builder.Services.AddCors(config =>
 });
 
 builder.Services.AddTransient<ILookupOnCallDevelopers, FakeDeveloperLookup>();
+builder.Services.AddHttpClient<RpcDeveloperLookup>(config =>
+{
+    config.BaseAddress = new Uri(builder.Configuration.GetValue<string>("on-call-developer-api"));
+    config.DefaultRequestHeaders.Add("User-Agent", "Topics Api");
+    config.DefaultRequestHeaders.Add("Acccept", "application/json");
+});
 
 var mapperConfig = new MapperConfiguration(opts =>
  {
@@ -28,7 +34,7 @@ var mapperConfig = new MapperConfiguration(opts =>
  });
 
 builder.Services.AddSingleton<MapperConfiguration>(mapperConfig);
-var mapper =mapperConfig.CreateMapper();
+var mapper = mapperConfig.CreateMapper();
 builder.Services.AddSingleton<IMapper>(mapper);
 
 builder.Services.AddScoped<IProvideTopicsData, EfSqlTopicsData>();

@@ -3,6 +3,8 @@
 public interface IProvideTopicsData
 {
     Task<GetTopicsModel> GetAllTopics();
-    Task<Maybe<GetTopicListItemModel>> GetTopicByIdAsync(int topicId);
-    Task<GetTopicListItemModel> AddTopicAsync(PostTopicRequestModel request);
+    Task<Maybe<TopicListItemModel>> GetTopicByIdAsync(int topicId);
+    Task<TopicListItemModel> AddTopicAsync(PostTopicRequestModel request);
+    Task RemoveAsync(int topicId);
+    Task<Maybe> ReplaceAsync(int id, TopicListItemModel request);
 }
